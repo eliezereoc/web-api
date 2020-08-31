@@ -1,7 +1,5 @@
-const Sequelize = require("../model/cliente");
-const { request, response } = require("express");
 const Cliente = require("../model/cliente");
-const { ne } = require("sequelize/types/lib/operators");
+const status = require("http-status");
 
 exports.buscarCliente = (request, response, next) => {
     const id = request.params.id;
@@ -10,8 +8,9 @@ exports.buscarCliente = (request, response, next) => {
         .then(cliente => {
             if(cliente){
                 response.send(cliente);
+                response.status(status.OK).send();
             }else{
-                response.status(404).send();
+                response.status(status.NOT_FOUND).send();
             }
         }).catch(error => next(error));
 };
@@ -21,7 +20,7 @@ exports.buscaTodosCliente = (request, response, next) => {
     let pagina = parseInt(request.query.pagina || 0);
 
     if (!Number.isInteger(limite) || !Number.isInteger(pagina)){
-        response.status(400).send();
+        response.status(status.NOT_FOUND).send();
     }
 
     const ITENS_POR_PAGINA = 10;
@@ -43,7 +42,7 @@ exports.criarCliente = (request, response, next) => {
         nome: nome,
         email: email
     }).then(() => {
-        response.status(201).send();
+        response.status(status.OK).send();
     }).catch((error) => next(error));
 }
 
@@ -66,7 +65,7 @@ exports.atualizaCliente = (request, response, next) => {
                     response.send();
                 }).catch(error => next(error));
             } else {
-                response.status(404).send();
+                response.status(status.NOT_FOUND).send();
             }
         }).catch(error => next(error));    
 }
@@ -84,7 +83,7 @@ exports.excluirCliente = (request, response, next) => {
                     response.send();
                 }).catch(error => next(error));
             } else {
-                response.status(404).send();
+                response.status(status.NOT_FOUND).send();
             }           
         }).catch(error => next(error));
 }
